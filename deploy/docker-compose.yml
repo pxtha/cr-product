@@ -1,0 +1,24 @@
+version: '3.0'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: postgres
+  crawl-data:
+    image: "cr-adapter-service:1.0.0"
+    container_name: cr-adapter-service
+    hostname: cr-adapter-service
+    restart: always
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
+    links:
+      - db
+    ports:
+      - 8081:8081
