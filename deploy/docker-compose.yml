@@ -1,16 +1,9 @@
-version: '3.0'
+version: '3.7'
 services:
-  db:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
-      POSTGRES_DB: postgres
-  crawl-data:
-    image: "cr-adapter-service:1.0.0"
-    container_name: cr-adapter-service
-    hostname: cr-adapter-service
+  cr-product:
+    image: "cr-product:1.0.0"
+    container_name: cr-product
+    hostname: cr-product
     restart: always
     environment:
       - DB_HOST=${DB_HOST}
@@ -18,7 +11,12 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
       - DB_NAME=${DB_NAME}
-    links:
-      - db
     ports:
-      - 8081:8081
+      - 8084:8084
+    networks:
+      - cr-networks
+
+networks:
+  cr-networks:
+    external: 
+      name: cr-networks

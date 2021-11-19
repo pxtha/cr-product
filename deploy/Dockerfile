@@ -1,10 +1,10 @@
 FROM alpine:3.8
 
 WORKDIR /home/
-COPY cr-adapter-service.bin .
+COPY cr-product.bin .
 
-RUN chmod +x cr-adapter-service.bin
+RUN chmod +x cr-product.bin
 
-EXPOSE 8081
+EXPOSE 8084
 
-CMD [ "./cr-adapter-service.bin" ]
+CMD [ "./cr-product.bin" ]
