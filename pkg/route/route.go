@@ -21,11 +21,11 @@ func NewService() *Service {
 	}
 	_ = env.Parse(s.setting)
 
-	db := s.GetDB()
+	// db := s.GetDB()
 
-	if s.setting.DbDebugEnable {
-		db = db.Debug()
-	}
+	// if s.setting.DbDebugEnable {
+	// 	db = db.Debug()
+	// }
 
 	v1Api := s.Router.Group("/api/v1")
 	v1Api.POST("/auth/sign-up", nil)

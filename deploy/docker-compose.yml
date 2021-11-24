@@ -6,11 +6,8 @@ services:
     hostname: cr-product
     restart: always
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASS}
-      - DB_NAME=${DB_NAME}
+      - PORT=${PORT}
+      - LOG_FORMAT=${LOG_FORMAT}
     ports:
       - 8084:8084
     networks:
