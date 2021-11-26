@@ -16,8 +16,8 @@ import (
 type HealthCheck struct {
 	ServiceName string    `json:"service_name"`
 	Version     string    `json:"version"`
-	Hostname    string    `json:"hostname"`
-	Timelife    time.Time `json:"time_life"`
+	HostName    string    `json:"host_name"`
+	TimeLife    time.Time `json:"time_life"`
 }
 
 var onceCategory = sync.Once{}
@@ -29,8 +29,8 @@ func NewService() {
 		singleton = &HealthCheck{
 			ServiceName: utils.APPNAME,
 			Version:     utils.VERSION,
-			Timelife:    time.Now(),
-			Hostname:    hostname,
+			TimeLife:    time.Now(),
+			HostName:    hostname,
 		}
 	})
 
@@ -54,8 +54,8 @@ func CheckHealth(rw http.ResponseWriter, r *http.Request) {
 	rsp := model.HealthCheckResponse{
 		ServiceName: singleton.ServiceName,
 		Version:     singleton.Version,
-		Hostname:    singleton.Hostname,
-		Timelife:    time.Since(singleton.Timelife).String(),
+		HostName:    singleton.HostName,
+		TimeLife:    time.Since(singleton.TimeLife).String(),
 	}
 	json.NewEncoder(rw).Encode(rsp)
 }

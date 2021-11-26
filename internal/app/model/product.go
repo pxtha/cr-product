@@ -2,15 +2,15 @@ package model
 
 type (
 	MessageReceive struct {
-		ID   string `json:"id_trigger"`
-		Shop string `json:"shop_name"`
-		URL  string `json:"url"`
+		ID     string `json:"id"`
+		Name   string `json:"name"`
+		Domain string `json:"domain"`
 	}
 
 	RawProduct struct {
 		SKU         string `json:"sku"`
 		Description string `json:"description"`
-		Slugname    string `json:"slug_name"`
+		SlugName    string `json:"slug_name"`
 		Link        string `json:"link"`
 		EcProductId string `json:"ec_product_id"`
 		CateId      string `json:"category_id"`
@@ -36,7 +36,7 @@ type (
 	HealthCheckResponse struct {
 		ServiceName string `json:"service_name"`
 		Version     string `json:"version"`
-		Hostname    string `json:"hostname"`
-		Timelife    string `json:"time_life"`
+		HostName    string `json:"host_name"`
+		TimeLife    string `json:"time_life"`
 	}
 )
