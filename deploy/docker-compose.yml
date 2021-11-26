@@ -6,8 +6,16 @@ services:
     hostname: cr-product
     restart: always
     environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+      - ENV_DEV=${ENV_DEV}
       - PORT=${PORT}
-      - LOG_FORMAT=${LOG_FORMAT}
+      - RB_HOST=${RB_HOST}
+      - RB_PORT=${RB_PORT}
+      - RB_USER=${RB_USER}
+      - RB_PASS=${RB_PASS}
+      - RB_PORT_UI=${RB_PORT_UI}
+      - QUEUE_NAME=${QUEUE_NAME}
+      - NUMBER_WORKER=${NUMBER_WORKER}
     ports:
       - 8084:8084
     networks:
