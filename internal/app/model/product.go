@@ -1,10 +1,13 @@
 package model
 
+import "github.com/google/uuid"
+
 type (
 	MessageReceive struct {
-		ID     string `json:"id"`
-		Name   string `json:"name"`
-		Domain string `json:"domain"`
+		Vendor_ID uuid.UUID `json:"vendor_id"`
+		Shop      string    `json:"shop_name"`
+		Cate_ID   uuid.UUID `json:"cate_id"`
+		Link      string    `json:"link"`
 	}
 
 	RawProduct struct {
@@ -18,7 +21,7 @@ type (
 		VendorId    string `json:"vendor_id"`
 		MadeIn      string `json:"made_in"`
 		Detail      string `json:"detail"`
-		Variant     Variant
+		Variant     []Variant
 	}
 
 	Variant struct {

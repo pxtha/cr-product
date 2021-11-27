@@ -87,9 +87,9 @@ func Consume(
 				continue
 			}
 
-			switch job.Name {
+			switch job.Shop {
 			case utils.VASCARA:
-				err := GetProductVascara(job.Domain)
+				err := GetProductVascara(job.Link)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
 					continue
