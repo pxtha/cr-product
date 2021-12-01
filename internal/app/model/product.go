@@ -11,6 +11,7 @@ type (
 	}
 
 	RawProduct struct {
+<<<<<<< HEAD
 		SKU           string `json:"sku"`
 		Description   string `json:"description"`
 		SlugName      string `json:"slug_name"`
@@ -22,10 +23,21 @@ type (
 		MadeIn        string `json:"made_in"`
 		Detail        string `json:"detail"`
 		Variant       []Variant
+=======
+		EcProductId string `json:"ec_product_id"`
+		Title       string `json:"title"`
+		Description string `json:"description"`
+		CateId      string `json:"category_id"`
+		VendorId    string `json:"vendor_id"`
+		MadeIn      string `json:"made_in"`
+		Detail      string `json:"detail"`
+		Variant     []Variant
+>>>>>>> develop
 	}
 
 	Variant struct {
-		Id            string   `json:"id"`
+		SKU           string   `json:"sku"`
+		Link          string   `json:"link"`
 		Price         float64  `json:"Price"`
 		DiscountPrice float64  `json:"discount_price"`
 		Name          string   `json:"name"`
