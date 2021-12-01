@@ -11,17 +11,17 @@ type (
 	}
 
 	RawProduct struct {
-		SKU         string `json:"sku"`
-		Description string `json:"description"`
-		SlugName    string `json:"slug_name"`
-		Link        string `json:"link"`
-		EcProductId string `json:"ec_product_id"`
-		CateId      string `json:"category_id"`
-		Title       string `json:"title"`
-		VendorId    string `json:"vendor_id"`
-		MadeIn      string `json:"made_in"`
-		Detail      string `json:"detail"`
-		Variant     []Variant
+		SKU           string `json:"sku"`
+		Description   string `json:"description"`
+		SlugName      string `json:"slug_name"`
+		Link          string `json:"link"`
+		EC_Product_ID string `json:"ec_product_id"`
+		CateId        string `json:"category_id"`
+		Title         string `json:"title"`
+		VendorId      string `json:"vendor_id"`
+		MadeIn        string `json:"made_in"`
+		Detail        string `json:"detail"`
+		Variant       []Variant
 	}
 
 	Variant struct {

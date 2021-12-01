@@ -8,14 +8,14 @@ type AppConfig struct {
 
 	Port string `env:"PORT"`
 
-	RBHost   string `env:"RB_HOST"`
-	RBPort   string `env:"RB_PORT"`
-	RBUser   string `env:"RB_USER"`
-	RBPass   string `env:"RB_PASS"`
-	RBPortUI string `env:"RB_PORT_UI"`
+	RBHost   string `env:"RB_HOST" envDefault:"localhost"`
+	RBPort   string `env:"RB_PORT" envDefault:"5672"`
+	RBUser   string `env:"RB_USER" envDefault:"guest"`
+	RBPass   string `env:"RB_PASS" envDefault:"guest"`
+	RBPortUI string `env:"RB_PORT_UI" envDefault:"15672"`
 
-	QueueName     string `env:"QUEUE_NAME"`
-	NumberWorkers string `env:"NUMBER_WORKER"`
+	QueueName     string `env:"QUEUE_NAME" envDefault:"cr-category"`
+	NumberWorkers string `env:"NUMBER_WORKER" envDefault:"2"`
 }
 
 var config AppConfig

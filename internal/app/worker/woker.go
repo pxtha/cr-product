@@ -89,11 +89,11 @@ func Consume(
 
 			switch job.Shop {
 			case utils.VASCARA:
-				err := GetProductVascara(job.Link)
-				if err != nil {
-					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
-					continue
-				}
+				// err := GetProductVascara("https://www.vascara.com/giay-cao-got/giay-du-tiec-quai-anh-bac-sdn-0683-mau-trang", "job.Cate_ID")
+				// if err != nil {
+				// 	utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+				// 	continue
+				// }
 				msg := fmt.Sprintf("crawlerName = %s, proceed message with time = %v", crawlerName, time.Since(start))
 				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
 				d.Ack(false)
