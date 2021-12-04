@@ -14,7 +14,20 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func Run() {
+type Worker struct {
+}
+
+type IWorker interface {
+	Run()
+	RunWorker(crawlerId int, centerChannel *amqp.Channel, queueName string)
+	Consume(inputQueue string, centerChannel *amqp.Channel, crawlerName string, consumerCenterTag string)
+}
+
+func NewWorker() IWorker {
+	return &Worker{}
+}
+
+func (w *Worker) Run() {
 	conf.SetEnv()
 	var centerQueueConfig = rabbitmq.QueueConfig{
 		Host:     conf.LoadEnv().RBHost,
@@ -41,20 +54,20 @@ func Run() {
 		go func(workerId int) {
 			defer wg.Done()
 			centerChannel := rabbitmq.GetRabbitmqChannel(centerConn)
-			RunWorker(workerId, centerChannel, conf.LoadEnv().QueueName)
+			w.RunWorker(workerId, centerChannel, conf.LoadEnv().QueueName)
 		}(workerCounter)
 	}
 	wg.Wait()
 }
 
-func RunWorker(crawlerId int, centerChannel *amqp.Channel, queueName string) {
+func (w *Worker) RunWorker(crawlerId int, centerChannel *amqp.Channel, queueName string) {
 	crawlerName := "Crawler " + strconv.Itoa(crawlerId)
 	consumerCenterTag := utils.RandomString(32)
 	// Get message from queue and handle
-	Consume(queueName, centerChannel, crawlerName, consumerCenterTag)
+	w.Consume(queueName, centerChannel, crawlerName, consumerCenterTag)
 }
 
-func Consume(
+func (w *Worker) Consume(
 	inputQueue string,
 	centerChannel *amqp.Channel,
 	crawlerName string,
