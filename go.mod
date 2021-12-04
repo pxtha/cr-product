@@ -9,6 +9,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cast v1.4.1
 	github.com/streadway/amqp v0.0.0-20190827072141-edfb9018d271
+	golang.org/x/text v0.3.7
 	gorm.io/gorm v1.22.3
 )
 

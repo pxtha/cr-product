@@ -8,4 +8,5 @@ const (
 
 	// Shop name
 	VASCARA = "vascara"
+	JUNO	= "juno"
 )

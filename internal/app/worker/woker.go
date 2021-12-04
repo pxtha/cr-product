@@ -98,8 +98,16 @@ func Consume(
 				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
 				d.Ack(false)
 				continue
-			case "juno":
-
+			case utils.JUNO:
+				err := GetProductJuno(job.Vendor_ID,job.Cate_ID,job.Link)
+				if err != nil {
+					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					continue
+				}
+				msg := fmt.Sprintf("crawlerName = %s, proceed message with time = %v", crawlerName, time.Since(start))
+				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
+				d.Ack(false)
+				continue
 			default:
 				utils.Log(utils.ERROR_LOG, "Fail to process message with ID: "+d.MessageId, nil, "")
 				d.Reject(false)
