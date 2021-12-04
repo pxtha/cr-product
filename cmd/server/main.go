@@ -1,9 +1,15 @@
 package main
 
 import (
+	"context"
+	"cr-product/conf"
+	"cr-product/internal/app/route"
 	"cr-product/internal/app/worker"
 	"cr-product/internal/utils"
+	"os"
 	"sync"
+
+	"gitlab.com/goxp/cloud0/logger"
 )
 
 func main() {
@@ -11,14 +17,21 @@ func main() {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
-		//worker.Run()
-		err := worker.GetProductVascara("https://www.vascara.com/giay-cao-got/giay-du-tiec-quai-anh-bac-sdn-0683-mau-trang", "job.Cate_ID", "vendorId")
-		if err != nil {
-			utils.Log(utils.ERROR_LOG, "Error: ", err, "")
-		}
+		w := worker.NewWorker()
+		w.Run()
 	}()
 	go func() {
-		//route.NewService()
+		conf.SetEnv()
+		_ = os.Setenv("PORT", conf.LoadEnv().Port)
+
+		logger.Init(utils.APPNAME)
+
+		app := route.NewService()
+		ctx := context.Background()
+		err := app.Start(ctx)
+		if err != nil {
+			logger.Tag("main").Error(err)
+		}
 	}()
 	wg.Wait()
 }

@@ -6,7 +6,7 @@ type AppConfig struct {
 	Environment string `env:"ENVIRONMENT"`
 	EnvDev      string `env:"ENV_DEV"`
 
-	Port string `env:"PORT"`
+	Port string `env:"PORT" envDefault:"8082"`
 
 	RBHost   string `env:"RB_HOST" envDefault:"localhost"`
 	RBPort   string `env:"RB_PORT" envDefault:"5672"`
@@ -14,8 +14,8 @@ type AppConfig struct {
 	RBPass   string `env:"RB_PASS" envDefault:"guest"`
 	RBPortUI string `env:"RB_PORT_UI" envDefault:"15672"`
 
-	QueueName     string `env:"QUEUE_NAME" envDefault:"cr-category"`
-	NumberWorkers string `env:"NUMBER_WORKER" envDefault:"2"`
+	QueueName     string `env:"QUEUE_NAME" envDefault:"cr-product"`
+	NumberWorkers string `env:"NUMBER_WORKER" envDefault:"5"`
 }
 
 var config AppConfig

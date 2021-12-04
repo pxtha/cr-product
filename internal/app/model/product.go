@@ -11,34 +11,20 @@ type (
 	}
 
 	RawProduct struct {
-<<<<<<< HEAD
-		SKU           string `json:"sku"`
-		Description   string `json:"description"`
-		SlugName      string `json:"slug_name"`
-		Link          string `json:"link"`
-		EC_Product_ID string `json:"ec_product_id"`
-		CateId        string `json:"category_id"`
-		Title         string `json:"title"`
-		VendorId      string `json:"vendor_id"`
-		MadeIn        string `json:"made_in"`
-		Detail        string `json:"detail"`
-		Variant       []Variant
-=======
-		EcProductId string `json:"ec_product_id"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
-		CateId      string `json:"category_id"`
-		VendorId    string `json:"vendor_id"`
-		MadeIn      string `json:"made_in"`
-		Detail      string `json:"detail"`
-		Variant     []Variant
->>>>>>> develop
+		EcProductId string    `json:"ec_product_id"`
+		Title       string    `json:"title"`
+		Description string    `json:"description"`
+		CateId      string    `json:"category_id"`
+		VendorId    string    `json:"vendor_id"`
+		MadeIn      string    `json:"made_in"`
+		Detail      string    `json:"detail"`
+		Variant     []Variant `json:"variant"`
 	}
 
 	Variant struct {
 		SKU           string   `json:"sku"`
 		Link          string   `json:"link"`
-		Price         float64  `json:"Price"`
+		Price         float64  `json:"price"`
 		DiscountPrice float64  `json:"discount_price"`
 		Name          string   `json:"name"`
 		Color         string   `json:"color"`
