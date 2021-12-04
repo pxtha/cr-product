@@ -12,8 +12,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// var productList []model.RawProduct
-
 func GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error {
 	var prodJson model.RawJunoJson
 	var prodRaw model.RawProduct
@@ -62,10 +60,5 @@ func GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error 
 		
 		prodRaw.Variant = append(prodRaw.Variant,prodVariant)
 	}
-
-	// productList = append(productList, prodRaw)
-
-	// dataJson, _ := json.MarshalIndent(productList,""," ")
-	// ioutil.WriteFile("product.json",dataJson,0644)
 	return nil
 }
