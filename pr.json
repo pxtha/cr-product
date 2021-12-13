@@ -1,100 +1,59 @@
 {
-   "ec_product_id": "1010SDN0683",
-   "title": "Giày Dự Tiệc Quai Ánh Bạc ",
+   "ec_product_id": "1013WAI0012",
+   "title": "Thắt Lưng Nữ ",
    "description": "",
-   "category_id": "0e515488-bccd-4c3d-85df-724ae47c0c5a",
-   "vendor_id": "424fba47-125c-4ce8-907d-9f49b86cdd42",
+   "category_id": "62948c98-6f46-4899-9332-82a06dcc5bff",
+   "vendor_id": "fcac085f-987e-4507-92ac-442b6613022a",
    "made_in": "",
-   "detail": "Kiểu gót:Gót nhọn;Độ cao gót:9.5 cm:Loại mũi:Hở mũi (mũi vuông);Chất liệu:Da nhân tạo;Hoa văn, chi tiết:Một màu, viền ánh kim;Phù hợp sử dụng:Đi làm, đi tiệc, đi chơi;",
+   "shop_name": "vascara",
+   "detail": "",
    "variant": [
       {
-         "sku": "1010SDN0683-mau-trang",
-         "link": "https://www.vascara.com/giay-cao-got/giay-du-tiec-quai-anh-bac-sdn-0683-mau-trang",
-         "price": 645000,
-         "discount_price": 322500,
-         "name": "Giày Dự Tiệc Quai Ánh Bạc - SDN 0683 - Màu Trắng",
-         "color": "mau-trang",
-         "size": "35",
+         "sku": "1013WAI0012-mau-nau-L",
+         "link": "https://www.vascara.com/that-lung/that-lung-nu-wai-0012-mau-nau",
+         "price": 325000,
+         "discount_price": 162500,
+         "name": "Thắt Lưng Nữ - WAI 0012 - Màu Nâu",
+         "color": "mau-nau",
+         "size": "L",
          "images": [
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-main__57793__1605525233.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-3__57795__1605525261.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-1__57794__1605525247.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-4__57796__1605525276.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-5__57797__1605525291.jpg"
+            "https://www.vascara.com/uploads/cms_productmedia/2018/September/13/40435_1536834330.jpg",
+            "https://www.vascara.com/uploads/cms_productmedia/2018/September/13/40436_1536834372.jpg"
          ],
          "videos": null,
+         "is_available": false,
          "stock": 0
       },
       {
-         "sku": "1010SDN0683-mau-trang",
-         "link": "https://www.vascara.com/giay-cao-got/giay-du-tiec-quai-anh-bac-sdn-0683-mau-trang",
-         "price": 645000,
-         "discount_price": 322500,
-         "name": "Giày Dự Tiệc Quai Ánh Bạc - SDN 0683 - Màu Trắng",
-         "color": "mau-trang",
-         "size": "36",
+         "sku": "1013WAI0012-mau-nau-M",
+         "link": "https://www.vascara.com/that-lung/that-lung-nu-wai-0012-mau-nau",
+         "price": 325000,
+         "discount_price": 162500,
+         "name": "Thắt Lưng Nữ - WAI 0012 - Màu Nâu",
+         "color": "mau-nau",
+         "size": "M",
          "images": [
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-main__57793__1605525233.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-3__57795__1605525261.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-1__57794__1605525247.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-4__57796__1605525276.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-5__57797__1605525291.jpg"
+            "https://www.vascara.com/uploads/cms_productmedia/2018/September/13/40435_1536834330.jpg",
+            "https://www.vascara.com/uploads/cms_productmedia/2018/September/13/40436_1536834372.jpg"
          ],
          "videos": null,
+         "is_available": false,
          "stock": 0
       },
       {
-         "sku": "1010SDN0683-mau-trang",
-         "link": "https://www.vascara.com/giay-cao-got/giay-du-tiec-quai-anh-bac-sdn-0683-mau-trang",
-         "price": 645000,
-         "discount_price": 322500,
-         "name": "Giày Dự Tiệc Quai Ánh Bạc - SDN 0683 - Màu Trắng",
-         "color": "mau-trang",
-         "size": "37",
+         "sku": "1013WAI0012-mau-nau-S",
+         "link": "https://www.vascara.com/that-lung/that-lung-nu-wai-0012-mau-nau",
+         "price": 325000,
+         "discount_price": 162500,
+         "name": "Thắt Lưng Nữ - WAI 0012 - Màu Nâu",
+         "color": "mau-nau",
+         "size": "S",
          "images": [
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-main__57793__1605525233.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-3__57795__1605525261.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-1__57794__1605525247.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-4__57796__1605525276.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-5__57797__1605525291.jpg"
+            "https://www.vascara.com/uploads/cms_productmedia/2018/September/13/40435_1536834330.jpg",
+            "https://www.vascara.com/uploads/cms_productmedia/2018/September/13/40436_1536834372.jpg"
          ],
          "videos": null,
-         "stock": 0
-      },
-      {
-         "sku": "1010SDN0683-mau-trang",
-         "link": "https://www.vascara.com/giay-cao-got/giay-du-tiec-quai-anh-bac-sdn-0683-mau-trang",
-         "price": 645000,
-         "discount_price": 322500,
-         "name": "Giày Dự Tiệc Quai Ánh Bạc - SDN 0683 - Màu Trắng",
-         "color": "mau-trang",
-         "size": "38",
-         "images": [
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-main__57793__1605525233.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-3__57795__1605525261.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-1__57794__1605525247.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-4__57796__1605525276.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-5__57797__1605525291.jpg"
-         ],
-         "videos": null,
-         "stock": 0
-      },
-      {
-         "sku": "1010SDN0683-mau-trang",
-         "link": "https://www.vascara.com/giay-cao-got/giay-du-tiec-quai-anh-bac-sdn-0683-mau-trang",
-         "price": 645000,
-         "discount_price": 322500,
-         "name": "Giày Dự Tiệc Quai Ánh Bạc - SDN 0683 - Màu Trắng",
-         "color": "mau-trang",
-         "size": "39",
-         "images": [
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-main__57793__1605525233.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-3__57795__1605525261.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-1__57794__1605525247.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-4__57796__1605525276.jpg",
-            "https://www.vascara.com/uploads/cms_productmedia/2020/November/16/giay-du-tiec-phoi-vien-anh-kim-sdn-0683-mau-trang-5__57797__1605525291.jpg"
-         ],
-         "videos": null,
+         "is_available": false,
          "stock": 0
       }
    ]

@@ -14,7 +14,7 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string) error {
+func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, shop string) error {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.vascara.com"),
 	)
@@ -26,30 +26,24 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string) 
 
 	c.OnHTML("body > div > div.page-content > div:nth-child(2) > div.container", func(h *colly.HTMLElement) {
 		prId := h.ChildAttr("#productId", "value")
-		pr.EcProductId = h.ChildAttr("#productCode", "value")
+		pr.EcProductID = h.ChildAttr("#productCode", "value")
 		prVariant.Link = URL
-		err = json.Unmarshal([]byte(gjson.Get(w.GetStock(prId, pr.EcProductId, URL), "size").String()), &objmap)
+		err = json.Unmarshal([]byte(gjson.Get(w.GetStock(prId, pr.EcProductID, URL), "size").String()), &objmap)
 	})
 
 	c.OnHTML("div.product-info", func(h *colly.HTMLElement) {
 		pr.Title = h.ChildText("h1.title-product")
 		tmp := strings.Split(pr.Title, "-")
 		pr.Title = tmp[0]
-		pr.CateId = cate_id
-		pr.VendorId = vendorid
+		pr.CateID = cate_id
+		pr.VendorID = vendorid
 		h.ForEach("ul.list-oppr > li > span", func(_ int, h *colly.HTMLElement) {
 			str += h.Text + "|"
 		})
-		tmp = strings.Split(str, "|")
-		if len(tmp) > 0 {
-			str = strings.Replace(str, tmp[0]+"|", "", -1)
-			str = strings.Replace(str, tmp[1]+"|", "", -1)
-			str = strings.Replace(str, tmp[2]+"|", "", -1)
-			str = strings.Replace(str, tmp[3]+"|", "", -1)
-			str = strings.ReplaceAll(str, "|", ":")
-			str = strings.ReplaceAll(str, " :", ";")
-			pr.Detail = str
-		}
+		str = strings.ReplaceAll(str, "|", ":")
+		str = strings.ReplaceAll(str, " :", ";")
+		pr.Detail = str
+		pr.Shop = shop
 	})
 
 	c.OnHTML("body > div > div.page-content > div:nth-child(2) > div.container > div", func(e *colly.HTMLElement) {
@@ -60,8 +54,8 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string) 
 		e.ForEach("li.lisize", func(_ int, h *colly.HTMLElement) {
 			tmp := strings.Split(URL, "-")
 			prVariant.Color = tmp[len(tmp)-2] + "-" + tmp[len(tmp)-1]
-			prVariant.SKU = pr.EcProductId + "-" + prVariant.Color
 			prVariant.Size = h.Text
+			prVariant.SKU = pr.EcProductID + "-" + prVariant.Color + "-" + prVariant.Size
 			prVariant.Name = e.ChildText("h1.title-product")
 			price, _ := strconv.Atoi(strings.Replace(e.ChildText("del > span.amount"), ".", "", -1))
 			prVariant.Price = float64(price)
@@ -72,10 +66,36 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string) 
 				prVariant.DiscountPrice = 0
 			}
 			prVariant.Stock, err = strconv.Atoi(string(objmap[prVariant.Size]))
-
+			if prVariant.Stock != 0 {
+				prVariant.IsAvailable = true
+			}
 			pr.Variant = append(pr.Variant, prVariant)
 		})
 
+		if pr.Variant == nil {
+			tmp := strings.Split(URL, "-")
+			prVariant.Color = tmp[len(tmp)-2] + "-" + tmp[len(tmp)-1]
+			if prVariant.Size == "" {
+				prVariant.SKU = pr.EcProductID + "-" + prVariant.Color
+			} else if prVariant.Color == "" {
+				prVariant.SKU = pr.EcProductID + "-" + prVariant.Size
+			}
+			prVariant.SKU = pr.EcProductID + "-" + prVariant.Color + "-" + prVariant.Size
+			prVariant.Name = e.ChildText("h1.title-product")
+			price, _ := strconv.Atoi(strings.Replace(e.ChildText("del > span.amount"), ".", "", -1))
+			prVariant.Price = float64(price)
+			price, _ = strconv.Atoi(strings.Replace(e.ChildText("ins > span.amount"), ".", "", -1))
+			prVariant.DiscountPrice = float64(price)
+			if prVariant.Price == 0 {
+				prVariant.Price = prVariant.DiscountPrice
+				prVariant.DiscountPrice = 0
+			}
+			prVariant.Stock, err = strconv.Atoi(string(objmap[prVariant.Size]))
+			if prVariant.Stock != 0 {
+				prVariant.IsAvailable = true
+			}
+			pr.Variant = append(pr.Variant, prVariant)
+		}
 	})
 
 	c.Visit(URL)
