@@ -21,6 +21,10 @@ type IWorker interface {
 	Run()
 	RunWorker(crawlerId int, centerChannel *amqp.Channel, queueName string)
 	Consume(inputQueue string, centerChannel *amqp.Channel, crawlerName string, consumerCenterTag string)
+
+	//vascara
+	GetProductVascara(URL string, cate_id string, vendorid string, shop string) error
+	GetStockVascara(productId string, productCode string, link string) string
 }
 
 func NewWorker() IWorker {
@@ -96,13 +100,13 @@ func (w *Worker) Consume(
 
 			jsonErr := json.Unmarshal(d.Body, &job)
 			if jsonErr != nil {
-				d.Nack(false, true)
+				d.Reject(false)
 				continue
 			}
 
 			switch job.Shop {
 			case utils.VASCARA:
-				err := GetProductVascara(job.Link)
+				err := w.GetProductVascara(job.Link, job.CateID.String(), job.VendorID.String(), job.Shop)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
 					continue

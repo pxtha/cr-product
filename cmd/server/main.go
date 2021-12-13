@@ -17,9 +17,13 @@ func main() {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
+		w := worker.NewWorker()
+		w.Run()
+	}()
+	go func() {
 		conf.SetEnv()
-
 		_ = os.Setenv("PORT", conf.LoadEnv().Port)
+
 		logger.Init(utils.APPNAME)
 
 		app := route.NewService()
@@ -28,11 +32,6 @@ func main() {
 		if err != nil {
 			logger.Tag("main").Error(err)
 		}
-		os.Clearenv()
-	}()
-	go func() {
-		w := worker.NewWorker()
-		w.Run()
 	}()
 	wg.Wait()
 }
