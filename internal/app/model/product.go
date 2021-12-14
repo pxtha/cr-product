@@ -18,15 +18,14 @@ type (
 		VendorID    string    `json:"vendor_id"`
 		MadeIn      string    `json:"made_in"`
 		Shop        string    `json:"shop_name"`
-		Detail      string    `json:"detail"`
 		Variant     []Variant `json:"variant"`
 	}
 
 	Variant struct {
 		SKU           string   `json:"sku"`
 		Link          string   `json:"link"`
-		Price         float64  `json:"price"`
-		DiscountPrice float64  `json:"discount_price"`
+		Price         string   `json:"price"`
+		DiscountPrice string   `json:"discount_price"`
 		Name          string   `json:"name"`
 		Color         string   `json:"color"`
 		Size          string   `json:"size"`
@@ -34,6 +33,7 @@ type (
 		Videos        []string `json:"videos"`
 		IsAvailable   bool     `json:"is_available"`
 		Stock         int      `json:"stock"`
+		Available     bool     `json:"available"`
 	}
 
 	HealthCheckResponse struct {

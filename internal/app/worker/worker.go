@@ -25,6 +25,10 @@ type IWorker interface {
 	//vascara
 	GetProductVascara(URL string, cate_id string, vendorid string, shop string) error
 	GetStockVascara(productId string, productCode string, link string) string
+
+	//Hoang Phuc
+	GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
+	GetHttpHtmlContent(link string) (string, error)
 }
 
 func NewWorker() IWorker {
@@ -96,7 +100,7 @@ func (w *Worker) Consume(
 	go func() {
 		for d := range messages {
 			start := time.Now()
-			var job model.MessageReceive
+			job := &model.MessageReceive{}
 
 			jsonErr := json.Unmarshal(d.Body, &job)
 			if jsonErr != nil {
@@ -111,12 +115,22 @@ func (w *Worker) Consume(
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
 					continue
 				}
-				msg := fmt.Sprintf("crawlerName = %s, proceed message with time = %v", crawlerName, time.Since(start))
+				msg := fmt.Sprintf("CrawlerName = %s, proceed message with time = %v", crawlerName, time.Since(start))
 				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
 				d.Ack(false)
 				continue
-			case "juno":
-
+			case utils.HOANGPHUC:
+				err := w.GetProductHP(job, centerChannel)
+				if err != nil {
+					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					continue
+				}
+				msg := fmt.Sprintf("CrawlerName = %s, proceed message with time = %v", crawlerName, time.Since(start))
+				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
+				d.Ack(false)
+				continue
+			case utils.JUNO:
+				continue
 			default:
 				utils.Log(utils.ERROR_LOG, "Fail to process message with ID: "+d.MessageId, nil, "")
 				d.Reject(false)

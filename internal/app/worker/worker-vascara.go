@@ -2,7 +2,6 @@ package worker
 
 import (
 	"cr-product/internal/app/model"
-	"cr-product/internal/utils"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -42,7 +41,7 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, 
 		})
 		str = strings.ReplaceAll(str, "|", ":")
 		str = strings.ReplaceAll(str, " :", ";")
-		pr.Detail = str
+		pr.Description = str
 		pr.Shop = shop
 	})
 
@@ -57,13 +56,11 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, 
 			prVariant.Size = h.Text
 			prVariant.SKU = pr.EcProductID + "-" + prVariant.Color + "-" + prVariant.Size
 			prVariant.Name = e.ChildText("h1.title-product")
-			price, _ := strconv.Atoi(strings.Replace(e.ChildText("del > span.amount"), ".", "", -1))
-			prVariant.Price = float64(price)
-			price, _ = strconv.Atoi(strings.Replace(e.ChildText("ins > span.amount"), ".", "", -1))
-			prVariant.DiscountPrice = float64(price)
-			if prVariant.Price == 0 {
+			prVariant.Price = e.ChildText("del > span.amount")
+			prVariant.DiscountPrice = e.ChildText("ins > span.amount")
+			if prVariant.Price == "" {
 				prVariant.Price = prVariant.DiscountPrice
-				prVariant.DiscountPrice = 0
+				prVariant.DiscountPrice = ""
 			}
 			prVariant.Stock, err = strconv.Atoi(string(objmap[prVariant.Size]))
 			if prVariant.Stock != 0 {
@@ -82,13 +79,11 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, 
 			}
 			prVariant.SKU = pr.EcProductID + "-" + prVariant.Color + "-" + prVariant.Size
 			prVariant.Name = e.ChildText("h1.title-product")
-			price, _ := strconv.Atoi(strings.Replace(e.ChildText("del > span.amount"), ".", "", -1))
-			prVariant.Price = float64(price)
-			price, _ = strconv.Atoi(strings.Replace(e.ChildText("ins > span.amount"), ".", "", -1))
-			prVariant.DiscountPrice = float64(price)
-			if prVariant.Price == 0 {
+			prVariant.Price = e.ChildText("del > span.amount")
+			prVariant.DiscountPrice = e.ChildText("ins > span.amount")
+			if prVariant.Price == "" {
 				prVariant.Price = prVariant.DiscountPrice
-				prVariant.DiscountPrice = 0
+				prVariant.DiscountPrice = ""
 			}
 			prVariant.Stock, err = strconv.Atoi(string(objmap[prVariant.Size]))
 			if prVariant.Stock != 0 {
@@ -99,10 +94,6 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, 
 	})
 
 	c.Visit(URL)
-	categoryJson1, err := json.MarshalIndent(pr, "", "   ")
-	utils.FailOnError(err, "", "")
-	err = ioutil.WriteFile("pr.json", categoryJson1, 0644)
-	utils.FailOnError(err, "", "")
 	if err != nil {
 		return err
 	}
