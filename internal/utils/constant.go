@@ -7,5 +7,7 @@ const (
 	VERSION           = "v1.0"
 
 	// Shop name
-	VASCARA = "vascara"
+	VASCARA   = "vascara"
+	HOANGPHUC = "hoangphuc"
+	JUNO      = "juno"
 )

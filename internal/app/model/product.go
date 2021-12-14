@@ -11,27 +11,27 @@ type (
 	}
 
 	RawProduct struct {
-		EcProductId string `json:"ec_product_id"`
-		Title       string `json:"title"`
-		Description string `json:"description"`
-		CateId      string `json:"category_id"`
-		VendorId    string `json:"vendor_id"`
-		MadeIn      string `json:"made_in"`
-		Detail      string `json:"detail"`
-		Variant     []Variant
+		EcProductId string    `json:"ec_product_id"`
+		Title       string    `json:"title"`
+		CateId      string    `json:"category_id"`
+		VendorId    string    `json:"vendor_id"`
+		MadeIn      string    `json:"made_in"`
+		Detail      string    `json:"detail"`
+		Variant     []Variant `json:"variant"`
 	}
 
 	Variant struct {
 		SKU           string   `json:"sku"`
 		Link          string   `json:"link"`
-		Price         float64  `json:"Price"`
-		DiscountPrice float64  `json:"discount_price"`
+		Price         string   `json:"price"`
+		DiscountPrice string   `json:"discount_price"`
 		Name          string   `json:"name"`
 		Color         string   `json:"color"`
 		Size          string   `json:"size"`
 		Images        []string `json:"images"`
 		Videos        []string `json:"videos"`
 		Stock         int      `json:"stock"`
+		Available     bool     `json:"available"`
 	}
 
 	HealthCheckResponse struct {

@@ -5,7 +5,7 @@ import (
 )
 
 type extraSetting struct {
-	DbDebugEnable bool `env:"DB_DEBUG_ENABLE" envDefault:"true"`
+	DbDebugEnable bool `env:"DB_DEBUG_ENABLE" envDefault:"false"`
 }
 
 type Service struct {
