@@ -4,8 +4,9 @@ import (
 	"context"
 	"cr-product/internal/app/model"
 	"cr-product/internal/utils"
+	"encoding/json"
 	"errors"
-	"fmt"
+	"io/ioutil"
 	"log"
 	"strings"
 	"time"
@@ -50,7 +51,7 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	related_product.Price = utils.FMPrice(dom.Find("span.old-price.sly-old-price > span.price-container.price-final_price.tax.weee > span.price-wrapper > span.price").First().Text())
 	related_product.SKU = strings.Replace(dom.Find("div.product.attribute.sku > div.value").First().Text(), " ", "", -1)
 	related_product.Name = dom.Find("h1.page-title>span.base").Text()
-	related_product.Available = true
+	related_product.IsAvailable = true
 	related_product.Link = job.Link
 
 	//product_detail.CATEGORY = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Giới tính']").Text()
@@ -63,20 +64,19 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	product_detail.Title = strings.Trim(related_product.Name, item[1])
 
 	if dom.Find("div").HasClass("stock unavailable") {
-		related_product.Available = false
+		related_product.IsAvailable = false
 		product_detail.Variant = append(product_detail.Variant, *related_product)
 	}
 
 	dom.Find("div.swatch-option.text").Each(func(i int, s *goquery.Selection) {
 		related_product.Size = s.Text()
-		fmt.Println(related_product.Size)
 		product_detail.Variant = append(product_detail.Variant, *related_product)
 	})
 
-	/* 	productJson, err := json.MarshalIndent(product_detail, "", "   ")
-	   	utils.CheckError(err)
-	   	err = ioutil.WriteFile("data.json", productJson, 0644)
-	   	utils.CheckError(err) */
+	productJson, err := json.MarshalIndent(product_detail, "", "   ")
+	utils.CheckError(err)
+	err = ioutil.WriteFile("data.json", productJson, 0644)
+	utils.CheckError(err)
 	return nil
 }
 

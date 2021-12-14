@@ -37,7 +37,6 @@ type (
 		Videos        []string `json:"videos"`
 		IsAvailable   bool     `json:"is_available"`
 		Stock         int      `json:"stock"`
-		Available     bool     `json:"available"`
 	}
 
 	HealthCheckResponse struct {
