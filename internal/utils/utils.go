@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"log"
 	"math/rand"
 	"strings"
@@ -30,4 +31,12 @@ func CheckError(err error) {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func Split(s string, sep string) ([]string, error) {
+	item := strings.Split(s, sep)
+	if len(item) < 2 {
+		return nil, errors.New("can't get product detail")
+	}
+	return item, nil
 }

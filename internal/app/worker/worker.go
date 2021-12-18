@@ -119,6 +119,7 @@ func (w *Worker) Consume(
 				err := w.GetProductHP(job, centerChannel)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					d.Nack(false, true)
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, proceed message with time = %v", crawlerName, time.Since(start))

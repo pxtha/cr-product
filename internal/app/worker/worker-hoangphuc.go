@@ -5,7 +5,6 @@ import (
 	"cr-product/internal/app/model"
 	"cr-product/internal/utils"
 	"errors"
-	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -18,8 +17,8 @@ import (
 func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error {
 	// Load the HTML document
 	html, err := w.GetHttpHtmlContent(job.Link)
-	if html == "" && err == nil {
-		return errors.New("timeout")
+	if html == "" {
+		return errors.New("can't get html content")
 	}
 	if err != nil {
 		return err
@@ -58,7 +57,11 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	//product_detail.VENDOR = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Thương hiệu']").Text()
 	//product_detail.ID, _ = dom.Find("div.price-box.price-final_price").Attr("data-product-id")
 
-	item := strings.Split(related_product.Name, product_detail.EcProductId)
+	item, err := utils.Split(related_product.Name, product_detail.EcProductId)
+	if err != nil {
+		return err
+	}
+
 	related_product.Color = strings.TrimSpace(item[1])
 	product_detail.Title = strings.Trim(related_product.Name, item[1])
 
@@ -69,7 +72,6 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 
 	dom.Find("div.swatch-option.text").Each(func(i int, s *goquery.Selection) {
 		related_product.Size = s.Text()
-		fmt.Println(related_product.Size)
 		product_detail.Variant = append(product_detail.Variant, *related_product)
 	})
 
@@ -84,16 +86,16 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 func (w *Worker) GetHttpHtmlContent(link string) (string, error) {
 
 	// create chrome instance
-	/* 	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), "ws://chromedp:9222/")
-	   	defer cancel() */
-	ctx, cancel := chromedp.NewContext(
-		context.Background(),
-		chromedp.WithLogf(log.Printf),
+	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), "ws://chromedp:9222/")
+	defer cancel()
+	ctx, cancel = chromedp.NewContext(
+		ctx,
+		chromedp.WithLogf(nil),
 	)
 	defer cancel()
 
 	// create a timeout
-	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
+	ctx, cancel = context.WithTimeout(ctx, 120*time.Second)
 	defer cancel()
 
 	var htmlContent string
