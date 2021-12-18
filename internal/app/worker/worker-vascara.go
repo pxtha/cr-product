@@ -2,15 +2,13 @@ package worker
 
 import (
 	"cr-product/internal/app/model"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"strings"
 
+	"github.com/danilopolani/fua"
 	"github.com/gocolly/colly"
-	"github.com/tidwall/gjson"
 )
 
 func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, shop string) error {
@@ -20,14 +18,14 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, 
 	pr := model.RawProduct{}
 	prVariant := model.Variant{}
 	var str string
-	var objmap map[string]json.RawMessage
+	// var stock string
 	var err error
 
 	c.OnHTML("body > div > div.page-content > div:nth-child(2) > div.container", func(h *colly.HTMLElement) {
-		prId := h.ChildAttr("#productId", "value")
+		//prId := h.ChildAttr("#productId", "value")
 		pr.EcProductID = h.ChildAttr("#productCode", "value")
 		prVariant.Link = URL
-		err = json.Unmarshal([]byte(gjson.Get(w.GetStockVascara(prId, pr.EcProductID, URL), "size").String()), &objmap)
+		//stock = w.GetStockVascara(prId, pr.EcProductID, URL)
 	})
 
 	c.OnHTML("div.product-info", func(h *colly.HTMLElement) {
@@ -50,23 +48,28 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, 
 			prVariant.Images = append(prVariant.Images, h.Attr("href"))
 		})
 
-		e.ForEach("li.lisize", func(_ int, h *colly.HTMLElement) {
-			tmp := strings.Split(URL, "-")
-			prVariant.Color = tmp[len(tmp)-2] + "-" + tmp[len(tmp)-1]
-			prVariant.Size = h.Text
-			prVariant.SKU = pr.EcProductID + "-" + prVariant.Color + "-" + prVariant.Size
-			prVariant.Name = e.ChildText("h1.title-product")
-			prVariant.Price = e.ChildText("del > span.amount")
-			prVariant.DiscountPrice = e.ChildText("ins > span.amount")
-			if prVariant.Price == "" {
-				prVariant.Price = prVariant.DiscountPrice
-				prVariant.DiscountPrice = ""
-			}
-			prVariant.Stock, err = strconv.Atoi(string(objmap[prVariant.Size]))
-			if prVariant.Stock != 0 {
-				prVariant.IsAvailable = true
-			}
-			pr.Variant = append(pr.Variant, prVariant)
+		e.ForEach("li.licolor", func(_ int, h *colly.HTMLElement) {
+			prVariant.Color = h.Attr("data-key")
+			e.ForEach("li.lisize", func(_ int, h *colly.HTMLElement) {
+				prVariant.Size = h.Text
+				prVariant.SKU = pr.EcProductID + "-" + prVariant.Color + "-" + prVariant.Size
+				prVariant.Name = e.ChildText("h1.title-product")
+				prVariant.Price = e.ChildText("del > span.amount")
+				prVariant.DiscountPrice = e.ChildText("ins > span.amount")
+				if prVariant.Price == "" {
+					prVariant.Price = prVariant.DiscountPrice
+					prVariant.DiscountPrice = ""
+				}
+				//prVariant.Stock, err = strconv.Atoi(gjson.Get(stock, "size."+prVariant.Color+"."+strings.ToLower(prVariant.Size)).String())
+				// if err != nil {
+				// 	prVariant.Stock, err = strconv.Atoi(gjson.Get(stock, "size."+strings.ToLower(prVariant.Size)).String())
+				// }
+
+				if prVariant.Stock != 0 {
+					prVariant.IsAvailable = true
+				}
+				pr.Variant = append(pr.Variant, prVariant)
+			})
 		})
 
 		if pr.Variant == nil {
@@ -85,7 +88,7 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, 
 				prVariant.Price = prVariant.DiscountPrice
 				prVariant.DiscountPrice = ""
 			}
-			prVariant.Stock, err = strconv.Atoi(string(objmap[prVariant.Size]))
+			///prVariant.Stock, err = strconv.Atoi(gjson.Get(stock, "size."+strings.ToLower(prVariant.Size)).String())
 			if prVariant.Stock != 0 {
 				prVariant.IsAvailable = true
 			}
@@ -116,6 +119,7 @@ func (w *Worker) GetStockVascara(productId string, productCode string, link stri
 	req.Header.Add("referer", link)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Add("Cookie", "SHASH=flbfrkc56ja78qr8bn3q5ia8p3; _t=l0o9ad03c6lop7q0hfi5jj6gmf")
+	req.Header.Add("User-Agent", fua.Random("desktop"))
 
 	res, err := client.Do(req)
 	if err != nil {

@@ -113,29 +113,33 @@ func (w *Worker) Consume(
 				err := w.GetProductVascara(job.Link, job.CateID.String(), job.VendorID.String(), job.Shop)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					d.Nack(false, true)
 					continue
 				}
-				msg := fmt.Sprintf("CrawlerName = %s, proceed message with time = %v", crawlerName, time.Since(start))
+				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
 				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
 				d.Ack(false)
 				continue
+
 			case utils.HOANGPHUC:
 				err := w.GetProductHP(job, centerChannel)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					d.Reject(false)
 					continue
 				}
-				msg := fmt.Sprintf("CrawlerName = %s, proceed message with time = %v", crawlerName, time.Since(start))
+				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
 				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
 				d.Ack(false)
 				continue
+
 			case utils.JUNO:
 				err := GetProductJuno(job.VendorID, job.CateID, job.Link)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
 					continue
 				}
-				msg := fmt.Sprintf("crawlerName = %s, proceed message with time = %v", crawlerName, time.Since(start))
+				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
 				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
 				d.Ack(false)
 				continue

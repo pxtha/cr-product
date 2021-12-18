@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/caarlos0/env v3.5.0+incompatible
+	github.com/danilopolani/fua v0.0.0-20170905161445-1f67420ac5ae
 	github.com/gocolly/colly v1.2.0
 	github.com/google/uuid v1.3.0
 	github.com/sirupsen/logrus v1.8.1
@@ -50,8 +51,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
-	github.com/tidwall/match v1.1.1 // indirect
-	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20211123203042-d83791d6bcd9 // indirect
@@ -71,4 +70,6 @@ require (
 	github.com/gobwas/ws v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 )

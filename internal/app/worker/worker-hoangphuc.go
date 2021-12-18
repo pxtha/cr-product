@@ -4,9 +4,7 @@ import (
 	"context"
 	"cr-product/internal/app/model"
 	"cr-product/internal/utils"
-	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"log"
 	"strings"
 	"time"
@@ -73,9 +71,9 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 		product_detail.Variant = append(product_detail.Variant, *related_product)
 	})
 
-	productJson, err := json.MarshalIndent(product_detail, "", "   ")
-	utils.CheckError(err)
-	err = ioutil.WriteFile("data.json", productJson, 0644)
+	// productJson, err := json.MarshalIndent(product_detail, "", "   ")
+	// utils.CheckError(err)
+	// err = ioutil.WriteFile("data.json", productJson, 0644)
 	utils.CheckError(err)
 	return nil
 }
@@ -84,19 +82,20 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 func (w *Worker) GetHttpHtmlContent(link string) (string, error) {
 
 	// create chrome instance
-	/* 	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), "ws://chromedp:9222/")
-	   	defer cancel() */
-	ctx, cancel := chromedp.NewContext(
-		context.Background(),
-		chromedp.WithLogf(log.Printf),
+	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), "ws://localhost:9222/")
+	defer cancel()
+	ctx, cancel = chromedp.NewContext(
+		ctx,
+		chromedp.WithLogf(nil),
 	)
 	defer cancel()
 
 	// create a timeout
-	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
+	ctx, cancel = context.WithTimeout(ctx, 300*time.Second)
 	defer cancel()
 
 	var htmlContent string
+	time.Sleep(5 * time.Second)
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(link),
 		chromedp.ScrollIntoView(`footer`),
