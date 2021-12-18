@@ -17,8 +17,8 @@ import (
 func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error {
 	// Load the HTML document
 	html, err := w.GetHttpHtmlContent(job.Link)
-	if html == "" && err == nil {
-		return errors.New("timeout")
+	if html == "" {
+		return errors.New("can't get html content")
 	}
 	if err != nil {
 		return err
@@ -41,7 +41,9 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 		image, _ := s.Attr("src")
 		related_product.Images = append(related_product.Images, image)
 	})
-
+	product_detail.CateID = job.CateID
+	product_detail.VendorID = job.VendorID
+	product_detail.MadeIn = ""
 	product_detail.EcProductID = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Model']").Text()
 	product_detail.Description = dom.Find("div.value.description-item > p").Text()
 
@@ -57,7 +59,11 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	//product_detail.VENDOR = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Thương hiệu']").Text()
 	//product_detail.ID, _ = dom.Find("div.price-box.price-final_price").Attr("data-product-id")
 
-	item := strings.Split(related_product.Name, product_detail.EcProductID)
+	item, err := utils.Split(related_product.Name, product_detail.EcProductID)
+	if err != nil {
+		return err
+	}
+
 	related_product.Color = strings.TrimSpace(item[1])
 	product_detail.Title = strings.Trim(related_product.Name, item[1])
 
@@ -71,10 +77,10 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 		product_detail.Variant = append(product_detail.Variant, *related_product)
 	})
 
-	// productJson, err := json.MarshalIndent(product_detail, "", "   ")
-	// utils.CheckError(err)
-	// err = ioutil.WriteFile("data.json", productJson, 0644)
-	utils.CheckError(err)
+	/* 	productJson, err := json.MarshalIndent(product_detail, "", "   ")
+	   	utils.CheckError(err)
+	   	err = ioutil.WriteFile("data.json", productJson, 0644)
+	   	utils.CheckError(err) */
 	return nil
 }
 
@@ -82,7 +88,7 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 func (w *Worker) GetHttpHtmlContent(link string) (string, error) {
 
 	// create chrome instance
-	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), "ws://localhost:9222/")
+	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), "ws://chromedp:9222/")
 	defer cancel()
 	ctx, cancel = chromedp.NewContext(
 		ctx,
@@ -91,11 +97,10 @@ func (w *Worker) GetHttpHtmlContent(link string) (string, error) {
 	defer cancel()
 
 	// create a timeout
-	ctx, cancel = context.WithTimeout(ctx, 300*time.Second)
+	ctx, cancel = context.WithTimeout(ctx, 120*time.Second)
 	defer cancel()
 
 	var htmlContent string
-	time.Sleep(5 * time.Second)
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(link),
 		chromedp.ScrollIntoView(`footer`),

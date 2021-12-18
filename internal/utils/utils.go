@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"log"
 	"math/rand"
 	"strings"
@@ -42,4 +43,21 @@ func NormalizeString(str string) string {
 	result = strings.ReplaceAll(result, "đ", "d")
 	result = strings.ReplaceAll(result, "Đ", "D")
 	return result
+}
+
+func Split(s string, sep string) ([]string, error) {
+	item := strings.Split(s, sep)
+	if len(item) < 2 {
+		return nil, errors.New("can't get product detail")
+	}
+	return item, nil
+}
+
+func CheckAttempts(attemp interface{}) (int, bool) {
+	deliveryCount := int(attemp.(int32))
+	if deliveryCount < 3 {
+		deliveryCount++
+		return deliveryCount, true
+	}
+	return deliveryCount, false
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error {
+func (w *Worker) GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error {
 	var prodJson model.RawJunoJson
 	var prodRaw model.RawProduct
 	var prodVariant model.Variant
@@ -31,8 +31,8 @@ func GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error 
 	prodRaw.EcProductID = strconv.Itoa(prodJson.ID)
 	prodRaw.Title = prodJson.Title
 	prodRaw.Description = prodJson.Description
-	prodRaw.CateID = categoryId.String()
-	prodRaw.VendorID = vendorId.String()
+	prodRaw.CateID = categoryId
+	prodRaw.VendorID = vendorId
 	prodRaw.MadeIn = prodJson.Vendor
 	prodRaw.Description = ""
 

@@ -9,9 +9,10 @@ import (
 
 	"github.com/danilopolani/fua"
 	"github.com/gocolly/colly"
+	"github.com/google/uuid"
 )
 
-func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, shop string) error {
+func (w *Worker) GetProductVascara(URL string, cate_id uuid.UUID, vendorid uuid.UUID, shop string) error {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.vascara.com"),
 	)

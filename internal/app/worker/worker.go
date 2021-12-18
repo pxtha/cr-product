@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/streadway/amqp"
 )
 
@@ -21,9 +22,11 @@ type IWorker interface {
 	Run()
 	RunWorker(crawlerId int, centerChannel *amqp.Channel, queueName string)
 	Consume(inputQueue string, centerChannel *amqp.Channel, crawlerName string, consumerCenterTag string)
+	//juno
+	GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error
 
 	//vascara
-	GetProductVascara(URL string, cate_id string, vendorid string, shop string) error
+	GetProductVascara(URL string, cate_id uuid.UUID, vendorid uuid.UUID, shop string) error
 	GetStockVascara(productId string, productCode string, link string) string
 
 	//Hoang Phuc
@@ -110,10 +113,16 @@ func (w *Worker) Consume(
 
 			switch job.Shop {
 			case utils.VASCARA:
-				err := w.GetProductVascara(job.Link, job.CateID.String(), job.VendorID.String(), job.Shop)
+				err := w.GetProductVascara(job.Link, job.CateID, job.VendorID, job.Shop)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
-					d.Nack(false, true)
+					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
+					if ok {
+						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RouteKey_product, centerChannel)
+						d.Ack(false)
+						continue
+					}
+					d.Nack(false, false)
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
@@ -125,7 +134,13 @@ func (w *Worker) Consume(
 				err := w.GetProductHP(job, centerChannel)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
-					d.Reject(false)
+					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
+					if ok {
+						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RouteKey_product, centerChannel)
+						d.Ack(false)
+						continue
+					}
+					d.Nack(false, false)
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
@@ -134,9 +149,16 @@ func (w *Worker) Consume(
 				continue
 
 			case utils.JUNO:
-				err := GetProductJuno(job.VendorID, job.CateID, job.Link)
+				err := w.GetProductJuno(job.VendorID, job.CateID, job.Link)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
+					if ok {
+						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RouteKey_product, centerChannel)
+						d.Ack(false)
+						continue
+					}
+					d.Nack(false, false)
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
