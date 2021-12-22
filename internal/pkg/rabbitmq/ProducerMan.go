@@ -6,7 +6,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func Produce(inputData interface{}, exchange string, routeKey string, ch *amqp.Channel) error {
+func Produce(inputData interface{}, redelivered interface{}, exchange string, routeKey string, ch *amqp.Channel) error {
 	bodyJson, _ := json.Marshal(inputData)
 
 	err := ch.Publish(
@@ -17,6 +17,9 @@ func Produce(inputData interface{}, exchange string, routeKey string, ch *amqp.C
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        bodyJson,
+			Headers: amqp.Table{
+				"x-redelivered-count": redelivered,
+			},
 		})
 
 	return err

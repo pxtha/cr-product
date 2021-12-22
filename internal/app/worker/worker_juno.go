@@ -1,7 +1,9 @@
 package worker
 
 import (
+	"cr-product/conf"
 	"cr-product/internal/app/model"
+	"cr-product/internal/pkg/rabbitmq"
 	"cr-product/internal/utils"
 	"encoding/json"
 	"io/ioutil"
@@ -16,6 +18,15 @@ func GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error 
 	var prodJson model.RawJunoJson
 	var prodRaw model.RawProduct
 	var prodVariant model.Variant
+
+	conf.SetEnv()
+	var centerQueueConfig = rabbitmq.QueueConfig{
+		Host:     conf.LoadEnv().RBHost,
+		Port:     conf.LoadEnv().RBPort,
+		Username: conf.LoadEnv().RBUser,
+		Password: conf.LoadEnv().RBPass,
+	}
+	ch, _ := rabbitmq.GetRabbitmqConnChannel(centerQueueConfig)
 
 	res, err := http.Get(URL)
 	if err != nil {
@@ -60,5 +71,20 @@ func GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error 
 
 		prodRaw.Variant = append(prodRaw.Variant, prodVariant)
 	}
+
+	mgs, err := json.Marshal(prodRaw)
+	if err != nil {
+		return err
+	}
+	message := model.MessageSendDataload{
+		Type: "product",
+		Shop: "juno",
+		Body: string(mgs),
+	}
+	err = rabbitmq.Produce(message, utils.Default_redelivered, utils.Exchange, utils.RouteKey_dataload, ch)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

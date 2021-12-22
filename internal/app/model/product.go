@@ -14,6 +14,12 @@ type (
 		Link     string    `json:"link"`
 	}
 
+	MessageSendDataload struct {
+		Type string `json:"type"`
+		Shop string `json:"shop"`
+		Body string `json:"body"`
+	}
+
 	RawProduct struct {
 		EcProductID string    `json:"ec_product_id"`
 		Title       string    `json:"title"`

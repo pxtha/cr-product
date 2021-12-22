@@ -2,6 +2,9 @@ package worker
 
 import (
 	"cr-product/internal/app/model"
+	"cr-product/internal/pkg/rabbitmq"
+	"cr-product/internal/utils"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -9,9 +12,10 @@ import (
 
 	"github.com/danilopolani/fua"
 	"github.com/gocolly/colly"
+	"github.com/streadway/amqp"
 )
 
-func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, shop string) error {
+func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, shop string, ch *amqp.Channel) error {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.vascara.com"),
 	)
@@ -97,6 +101,19 @@ func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, 
 	})
 
 	c.Visit(URL)
+	if err != nil {
+		return err
+	}
+	message, err := json.Marshal(pr)
+	if err != nil {
+		return err
+	}
+	mgs := model.MessageSendDataload{
+		Type: "product",
+		Shop: "vascara",
+		Body: string(message),
+	}
+	err = rabbitmq.Produce(mgs, utils.Default_redelivered, utils.Exchange, utils.RouteKey_dataload, ch)
 	if err != nil {
 		return err
 	}

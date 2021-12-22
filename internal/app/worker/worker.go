@@ -23,7 +23,7 @@ type IWorker interface {
 	Consume(inputQueue string, centerChannel *amqp.Channel, crawlerName string, consumerCenterTag string)
 
 	//vascara
-	GetProductVascara(URL string, cate_id string, vendorid string, shop string) error
+	GetProductVascara(URL string, cate_id string, vendorid string, shop string, ch *amqp.Channel) error
 	GetStockVascara(productId string, productCode string, link string) string
 
 	//Hoang Phuc
@@ -110,7 +110,7 @@ func (w *Worker) Consume(
 
 			switch job.Shop {
 			case utils.VASCARA:
-				err := w.GetProductVascara(job.Link, job.CateID.String(), job.VendorID.String(), job.Shop)
+				err := w.GetProductVascara(job.Link, job.CateID.String(), job.VendorID.String(), job.Shop, centerChannel)
 				if err != nil {
 					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
 					d.Nack(false, true)
