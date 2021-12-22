@@ -115,7 +115,7 @@ func (w *Worker) Consume(
 			case utils.VASCARA:
 				err := w.GetProductVascara(job.Link, job.CateID, job.VendorID, job.Shop)
 				if err != nil {
-					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					utils.Log(utils.ERROR_LOG, "Error: ", err, d.MessageId)
 					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
 					if ok {
 						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RouteKey_product, centerChannel)
@@ -126,14 +126,14 @@ func (w *Worker) Consume(
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
-				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
+				utils.Log(utils.INFO_LOG, msg, nil, d.MessageId)
 				d.Ack(false)
 				continue
 
 			case utils.HOANGPHUC:
 				err := w.GetProductHP(job, centerChannel)
 				if err != nil {
-					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					utils.Log(utils.ERROR_LOG, "Error: ", err, d.MessageId)
 					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
 					if ok {
 						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RouteKey_product, centerChannel)
@@ -144,14 +144,14 @@ func (w *Worker) Consume(
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
-				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
+				utils.Log(utils.INFO_LOG, msg, nil, d.MessageId)
 				d.Ack(false)
 				continue
 
 			case utils.JUNO:
 				err := w.GetProductJuno(job.VendorID, job.CateID, job.Link)
 				if err != nil {
-					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					utils.Log(utils.ERROR_LOG, "Error: ", err, d.MessageId)
 					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
 					if ok {
 						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RouteKey_product, centerChannel)
@@ -162,16 +162,16 @@ func (w *Worker) Consume(
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
-				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
+				utils.Log(utils.INFO_LOG, msg, nil, d.MessageId)
 				d.Ack(false)
 				continue
 
 			default:
-				utils.Log(utils.ERROR_LOG, "Fail to process message with ID: "+d.MessageId, nil, "")
+				utils.Log(utils.ERROR_LOG, "Fail to process message with ID: "+d.MessageId, nil, d.MessageId)
 				d.Reject(false)
 			}
 		}
 	}()
-	utils.Log(utils.INFO_LOG, " [*] Waiting for logs. To exit press CTRL+C", nil, "messageId")
+	utils.Log(utils.INFO_LOG, " [*] Waiting for logs. To exit press CTRL+C", nil, "")
 	<-forever
 }

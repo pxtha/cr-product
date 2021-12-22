@@ -1,27 +1,28 @@
 package worker
 
 import (
-	"context"
+	"bytes"
 	"cr-product/internal/app/model"
+	"cr-product/internal/pkg/rabbitmq"
 	"cr-product/internal/utils"
 	"errors"
+	"fmt"
 	"log"
+	"net/http"
 	"strings"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/chromedp/chromedp"
 	"github.com/streadway/amqp"
 )
 
 func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error {
 	// Load the HTML document
 	html, err := w.GetHttpHtmlContent(job.Link)
-	if html == "" {
-		return errors.New("can't get html content")
-	}
 	if err != nil {
 		return err
+	}
+	if html == "" {
+		return errors.New("can't get html document")
 	}
 
 	dom, err := goquery.NewDocumentFromReader(strings.NewReader(html))
@@ -74,8 +75,14 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 
 	dom.Find("div.swatch-option.text").Each(func(i int, s *goquery.Selection) {
 		related_product.Size = s.Text()
+		fmt.Println(related_product.Size)
 		product_detail.Variant = append(product_detail.Variant, *related_product)
 	})
+
+	err = rabbitmq.Produce(product_detail, utils.Default_redelivered, utils.Exchange, utils.RouteKey_dataload, ch)
+	if err != nil {
+		utils.FailOnError(err, "Failed to publish a message to the queue", "")
+	}
 
 	/* 	productJson, err := json.MarshalIndent(product_detail, "", "   ")
 	   	utils.CheckError(err)
@@ -84,32 +91,40 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	return nil
 }
 
-//Get the data crawled from the website
 func (w *Worker) GetHttpHtmlContent(link string) (string, error) {
 
-	// create chrome instance
-	ctx, cancel := chromedp.NewRemoteAllocator(context.Background(), "ws://chromedp:9222/")
-	defer cancel()
-	ctx, cancel = chromedp.NewContext(
-		ctx,
-		chromedp.WithLogf(nil),
-	)
-	defer cancel()
+	url := "http://188.166.220.131:1003/ferret/"
+	method := "POST"
 
-	// create a timeout
-	ctx, cancel = context.WithTimeout(ctx, 120*time.Second)
-	defer cancel()
+	msg := fmt.Sprintf(`{
+		"text": "LET doc = DOCUMENT(@url, {driver: 'cdp'}) WAIT_ELEMENT(doc, '.modals-wrapper', 10000) RETURN doc",
+		"params": {
+			"url": "%v"
+		}
+	}`, link)
+	payload := strings.NewReader(msg)
 
-	var htmlContent string
-	err := chromedp.Run(ctx,
-		chromedp.Navigate(link),
-		chromedp.ScrollIntoView(`footer`),
-		chromedp.WaitVisible(`body > div.modals-wrapper`),
-		chromedp.OuterHTML(`document.querySelector("body")`, &htmlContent, chromedp.ByJSPath),
-	)
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, payload)
+
 	if err != nil {
 		return "", err
 	}
+	req.Header.Add("Content-Type", "application/json")
 
-	return htmlContent, nil
+	res, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer res.Body.Close()
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	newStr := buf.String()
+
+	newHTML := strings.Trim(newStr, "\"")
+	newHTML = strings.Replace(newHTML, `\n`, "", -1)
+	newHTML = strings.Replace(newHTML, "\\", "", -1)
+
+	return newHTML, nil
 }

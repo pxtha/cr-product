@@ -48,7 +48,7 @@ func NormalizeString(str string) string {
 func Split(s string, sep string) ([]string, error) {
 	item := strings.Split(s, sep)
 	if len(item) < 2 {
-		return nil, errors.New("can't get product detail")
+		return nil, errors.New("can't get product")
 	}
 	return item, nil
 }
