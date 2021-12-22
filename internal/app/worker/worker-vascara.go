@@ -12,10 +12,11 @@ import (
 
 	"github.com/danilopolani/fua"
 	"github.com/gocolly/colly"
+	"github.com/google/uuid"
 	"github.com/streadway/amqp"
 )
 
-func (w *Worker) GetProductVascara(URL string, cate_id string, vendorid string, shop string, ch *amqp.Channel) error {
+func (w *Worker) GetProductVascara(URL string, cate_id uuid.UUID, vendorid uuid.UUID, shop string, ch *amqp.Channel) error {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.vascara.com"),
 	)

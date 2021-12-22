@@ -9,7 +9,6 @@ const (
 	VERSION           = "v1.0"
 
 	Default_redelivered = 0
-
 	// Shop name
 	VASCARA   = "vascara"
 	HOANGPHUC = "hoangphuc"

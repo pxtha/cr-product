@@ -24,8 +24,8 @@ type (
 		EcProductID string    `json:"ec_product_id"`
 		Title       string    `json:"title"`
 		Description string    `json:"description"`
-		CateID      string    `json:"category_id"`
-		VendorID    string    `json:"vendor_id"`
+		CateID      uuid.UUID `json:"category_id"`
+		VendorID    uuid.UUID `json:"vendor_id"`
 		MadeIn      string    `json:"made_in"`
 		Shop        string    `json:"shop_name"`
 		Variant     []Variant `json:"variant"`

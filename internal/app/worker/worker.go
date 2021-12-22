@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/streadway/amqp"
 )
 
@@ -22,8 +23,11 @@ type IWorker interface {
 	RunWorker(crawlerId int, centerChannel *amqp.Channel, queueName string)
 	Consume(inputQueue string, centerChannel *amqp.Channel, crawlerName string, consumerCenterTag string)
 
+	//juno
+	GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error
+
 	//vascara
-	GetProductVascara(URL string, cate_id string, vendorid string, shop string, ch *amqp.Channel) error
+	GetProductVascara(URL string, cate_id uuid.UUID, vendorid uuid.UUID, shop string, ch *amqp.Channel) error
 	GetStockVascara(productId string, productCode string, link string) string
 
 	//Hoang Phuc
@@ -110,46 +114,65 @@ func (w *Worker) Consume(
 
 			switch job.Shop {
 			case utils.VASCARA:
-				err := w.GetProductVascara(job.Link, job.CateID.String(), job.VendorID.String(), job.Shop, centerChannel)
+				err := w.GetProductVascara(job.Link, job.CateID, job.VendorID, job.Shop, centerChannel)
 				if err != nil {
-					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
-					d.Nack(false, true)
+					utils.Log(utils.ERROR_LOG, "Error: ", err, d.MessageId)
+					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
+					if ok {
+						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RouteKey_product, centerChannel)
+						d.Ack(false)
+						continue
+					}
+					d.Nack(false, false)
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
-				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
+				utils.Log(utils.INFO_LOG, msg, nil, d.MessageId)
 				d.Ack(false)
 				continue
 
 			case utils.HOANGPHUC:
 				err := w.GetProductHP(job, centerChannel)
 				if err != nil {
-					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
-					d.Reject(false)
+					utils.Log(utils.ERROR_LOG, "Error: ", err, d.MessageId)
+					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
+					if ok {
+						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RouteKey_product, centerChannel)
+						d.Ack(false)
+						continue
+					}
+					d.Nack(false, false)
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
-				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
+				utils.Log(utils.INFO_LOG, msg, nil, d.MessageId)
 				d.Ack(false)
 				continue
 
 			case utils.JUNO:
-				err := GetProductJuno(job.VendorID, job.CateID, job.Link)
+				err := w.GetProductJuno(job.VendorID, job.CateID, job.Link)
 				if err != nil {
-					utils.Log(utils.ERROR_LOG, "Error: ", err, "")
+					utils.Log(utils.ERROR_LOG, "Error: ", err, d.MessageId)
+					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
+					if ok {
+						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RouteKey_product, centerChannel)
+						d.Ack(false)
+						continue
+					}
+					d.Nack(false, false)
 					continue
 				}
 				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
-				utils.Log(utils.INFO_LOG, msg, nil, "messageId")
+				utils.Log(utils.INFO_LOG, msg, nil, d.MessageId)
 				d.Ack(false)
 				continue
 
 			default:
-				utils.Log(utils.ERROR_LOG, "Fail to process message with ID: "+d.MessageId, nil, "")
+				utils.Log(utils.ERROR_LOG, "Fail to process message with ID: "+d.MessageId, nil, d.MessageId)
 				d.Reject(false)
 			}
 		}
 	}()
-	utils.Log(utils.INFO_LOG, " [*] Waiting for logs. To exit press CTRL+C", nil, "messageId")
+	utils.Log(utils.INFO_LOG, " [*] Waiting for logs. To exit press CTRL+C", nil, "")
 	<-forever
 }
