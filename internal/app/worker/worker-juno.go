@@ -45,7 +45,7 @@ func (w *Worker) GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL st
 	prodRaw.CateID = categoryId
 	prodRaw.VendorID = vendorId
 	prodRaw.MadeIn = prodJson.Vendor
-	prodRaw.Description = ""
+	prodRaw.Shop = utils.JUNO
 
 	for _, v := range prodJson.Variants {
 		prodVariant.SKU = v.Sku

@@ -5,6 +5,7 @@ import (
 	"cr-product/internal/app/model"
 	"cr-product/internal/pkg/rabbitmq"
 	"cr-product/internal/utils"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -45,6 +46,7 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	product_detail.CateID = job.CateID
 	product_detail.VendorID = job.VendorID
 	product_detail.MadeIn = ""
+	product_detail.Shop = utils.HOANGPHUC
 	product_detail.EcProductID = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Model']").Text()
 	product_detail.Description = dom.Find("div.value.description-item > p").Text()
 
@@ -75,11 +77,22 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 
 	dom.Find("div.swatch-option.text").Each(func(i int, s *goquery.Selection) {
 		related_product.Size = s.Text()
-		fmt.Println(related_product.Size)
 		product_detail.Variant = append(product_detail.Variant, *related_product)
 	})
 
-	err = rabbitmq.Produce(product_detail, utils.Default_redelivered, utils.Exchange, utils.RouteKey_dataload, ch)
+	message, err := json.Marshal(product_detail)
+	if err != nil {
+		return err
+	}
+	mgs := model.MessageSendDataload{
+		Type: "product",
+		Shop: "hoangphuc",
+		Body: string(message),
+	}
+	err = rabbitmq.Produce(mgs, utils.Default_redelivered, utils.Exchange, utils.RouteKey_dataload, ch)
+	if err != nil {
+		return err
+	}
 	if err != nil {
 		utils.FailOnError(err, "Failed to publish a message to the queue", "")
 	}
