@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -22,13 +21,13 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	if err != nil {
 		return err
 	}
-	if html == "" {
+	if strings.Contains(html, "context deadline exceeded: WAIT_ELEMENT") {
 		return errors.New("can't get html document")
 	}
 
 	dom, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 	if err != nil {
-		log.Fatal(err)
+		return errors.New("can't read html document")
 	}
 
 	product_detail := &model.RawProduct{}
@@ -49,6 +48,10 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	product_detail.Shop = utils.HOANGPHUC
 	product_detail.EcProductID = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Model']").Text()
 	product_detail.Description = dom.Find("div.value.description-item > p").Text()
+	//product_detail.CATEGORY = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Giới tính']").Text()
+	//product_detail.SEASON = dom.Find("table.data.table.additional-attributes> tbody > tr >td.col.data[data-th='Season']").Text()
+	//product_detail.VENDOR = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Thương hiệu']").Text()
+	//product_detail.ID, _ = dom.Find("div.price-box.price-final_price").Attr("data-product-id")
 
 	related_product.DiscountPrice = utils.FMPrice(dom.Find("span.normal-price > span.price-container.price-final_price.tax.weee > span.price-wrapper > span.price").First().Text())
 	related_product.Price = utils.FMPrice(dom.Find("span.old-price.sly-old-price > span.price-container.price-final_price.tax.weee > span.price-wrapper > span.price").First().Text())
@@ -56,11 +59,6 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	related_product.Name = dom.Find("h1.page-title>span.base").Text()
 	related_product.IsAvailable = true
 	related_product.Link = job.Link
-
-	//product_detail.CATEGORY = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Giới tính']").Text()
-	//product_detail.SEASON = dom.Find("table.data.table.additional-attributes> tbody > tr >td.col.data[data-th='Season']").Text()
-	//product_detail.VENDOR = dom.Find("table.data.table.additional-attributes> tbody > tr > td.col.data[data-th='Thương hiệu']").Text()
-	//product_detail.ID, _ = dom.Find("div.price-box.price-final_price").Attr("data-product-id")
 
 	item, err := utils.Split(related_product.Name, product_detail.EcProductID)
 	if err != nil {
@@ -89,18 +87,10 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 		Shop: "hoangphuc",
 		Body: string(message),
 	}
-	err = rabbitmq.Produce(mgs, utils.Default_redelivered, utils.Exchange, utils.RouteKey_dataload, ch)
+	err = rabbitmq.Produce(mgs, utils.DefaultRedelivered, utils.Exchange, utils.RoutekeyDataload, ch)
 	if err != nil {
 		return err
 	}
-	if err != nil {
-		utils.FailOnError(err, "Failed to publish a message to the queue", "")
-	}
-
-	/* 	productJson, err := json.MarshalIndent(product_detail, "", "   ")
-	   	utils.CheckError(err)
-	   	err = ioutil.WriteFile("data.json", productJson, 0644)
-	   	utils.CheckError(err) */
 	return nil
 }
 
@@ -110,7 +100,7 @@ func (w *Worker) GetHttpHtmlContent(link string) (string, error) {
 	method := "POST"
 
 	msg := fmt.Sprintf(`{
-		"text": "LET doc = DOCUMENT(@url, {driver: 'cdp'}) WAIT_ELEMENT(doc, '.modals-wrapper', 10000) RETURN doc",
+		"text": "LET doc = DOCUMENT(@url, {driver: 'cdp'}) WAIT_ELEMENT(doc, '.modals-wrapper', 15000) RETURN doc",
 		"params": {
 			"url": "%v"
 		}

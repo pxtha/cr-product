@@ -81,7 +81,7 @@ func (w *Worker) GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL st
 		Shop: "juno",
 		Body: string(mgs),
 	}
-	err = rabbitmq.Produce(message, utils.Default_redelivered, utils.Exchange, utils.RouteKey_dataload, ch)
+	err = rabbitmq.Produce(message, utils.DefaultRedelivered, utils.Exchange, utils.RoutekeyDataload, ch)
 	if err != nil {
 		return err
 	}

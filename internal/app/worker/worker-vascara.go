@@ -114,7 +114,7 @@ func (w *Worker) GetProductVascara(URL string, cate_id uuid.UUID, vendorid uuid.
 		Shop: "vascara",
 		Body: string(message),
 	}
-	err = rabbitmq.Produce(mgs, utils.Default_redelivered, utils.Exchange, utils.RouteKey_dataload, ch)
+	err = rabbitmq.Produce(mgs, utils.DefaultRedelivered, utils.Exchange, utils.RoutekeyDataload, ch)
 	if err != nil {
 		return err
 	}

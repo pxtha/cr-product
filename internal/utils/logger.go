@@ -2,7 +2,6 @@ package utils
 
 import (
 	"cr-product/conf"
-	"fmt"
 	"os"
 	"runtime"
 	"time"
@@ -44,7 +43,7 @@ func InitLogger() {
 	}
 }
 
-func Log(level string, message interface{}, err error, messageId string) {
+func Log(level string, message interface{}, err error, url string) {
 	infoLogType := ""
 	switch message.(type) {
 	case string:
@@ -59,9 +58,9 @@ func Log(level string, message interface{}, err error, messageId string) {
 	unixNow := now.Unix()
 	loc := time.FixedZone("UTC+7", 1*13*16)
 	//Timezone, err := time.LoadLocation(loc)
-	if err != nil {
+	/* 	if err != nil {
 		fmt.Println(err)
-	}
+	} */
 	readableTime := now.In(loc).Format(time.RFC3339)
 
 	switch level {
@@ -93,7 +92,7 @@ func Log(level string, message interface{}, err error, messageId string) {
 		default:
 			log.WithFields(
 				log.Fields{
-					"id":            messageId,
+					"url":           url,
 					"unix_time":     unixNow,
 					"readable_time": readableTime,
 				}).Info(message)
@@ -101,14 +100,14 @@ func Log(level string, message interface{}, err error, messageId string) {
 	case DEBUG_LOG:
 		log.WithFields(
 			log.Fields{
-				"id":            messageId,
+				"url":           url,
 				"unix_time":     unixNow,
 				"readable_time": readableTime,
 			}).Debug(message)
 	case WARN_LOG:
 		log.WithFields(
 			log.Fields{
-				"id":            messageId,
+				"url":           url,
 				"unix_time":     unixNow,
 				"readable_time": readableTime,
 			}).Warn(message)
@@ -116,14 +115,14 @@ func Log(level string, message interface{}, err error, messageId string) {
 		//file, line, funcName := trace()
 		log.WithFields(
 			log.Fields{
-				"id":            messageId,
+				"url":           url,
 				"unix_time":     unixNow,
 				"readable_time": readableTime,
 			}).Error(message, err)
 	case FATAL_LOG:
 		log.WithFields(
 			log.Fields{
-				"id":            messageId,
+				"url":           url,
 				"unix_time":     unixNow,
 				"readable_time": readableTime,
 			}).Log(log.FatalLevel, message, err) //if using .Fatal(message, err) directly -> logger auto quit application
@@ -138,9 +137,9 @@ func trace() (string, int, string) {
 	frame, _ := frames.Next()
 	return frame.File, frame.Line, frame.Function
 }
-func FailOnError(err error, message string, messageId string) {
+func FailOnError(err error, message string, url string) {
 	if err != nil {
-		Log(FATAL_LOG, message, err, messageId)
+		Log(FATAL_LOG, message, err, url)
 		//force to exit
 		os.Exit(10)
 	}
