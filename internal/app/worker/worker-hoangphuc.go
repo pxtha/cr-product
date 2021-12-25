@@ -96,7 +96,7 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 
 func (w *Worker) GetHttpHtmlContent(link string) (string, error) {
 
-	url := "http://188.166.220.131:1003/ferret/"
+	url := "http://ferret:8080"
 	method := "POST"
 
 	msg := fmt.Sprintf(`{
