@@ -52,7 +52,7 @@ type (
 		TimeLife    string `json:"time_life"`
 	}
 
-	RawJunoJson struct {
+	RawJunoMaiSonJson struct {
 		Available            bool        `json:"available"`
 		CompareAtPriceMax    int         `json:"compare_at_price_max"`
 		CompareAtPriceMin    int         `json:"compare_at_price_min"`

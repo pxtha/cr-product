@@ -24,16 +24,19 @@ type IWorker interface {
 	RunWorker(crawlerId int, centerChannel *amqp.Channel, queueName string)
 	Consume(inputQueue string, centerChannel *amqp.Channel, crawlerName string, consumerCenterTag string)
 
-	//juno
-	GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, URL string) error
+	//Juno
+	GetProductJuno(vendorId uuid.UUID, categoryId uuid.UUID, url string) error
 
-	//vascara
+	//Vascara
 	GetProductVascara(URL string, cate_id uuid.UUID, vendorid uuid.UUID, shop string, ch *amqp.Channel) error
 	GetStockVascara(productId string, productCode string, link string) string
 
-	//Hoang Phuc
+	//HoangPhuc
 	GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 	GetHttpHtmlContent(link string) (string, error)
+
+	//MaiSon
+	GetProductMaison(vendorId uuid.UUID, categoryId uuid.UUID, url string) error
 }
 
 func NewWorker() IWorker {
@@ -154,6 +157,25 @@ func (w *Worker) Consume(
 
 			case utils.JUNO:
 				err := w.GetProductJuno(job.VendorID, job.CateID, job.Link)
+				if err != nil {
+					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
+					if ok {
+						rabbitmq.Produce(job, attemp, utils.Exchange, utils.RoutekeyProduct, centerChannel)
+						utils.Log(utils.ERROR_LOG, "Attemp: "+strconv.Itoa(attemp)+" |Error: ", err, job.Link)
+						d.Ack(false)
+						continue
+					}
+					utils.Log(utils.ERROR_LOG, "Error: ", err, job.Link)
+					d.Nack(false, false)
+					continue
+				}
+				msg := fmt.Sprintf("CrawlerName = %s, shop = %v proceed message with time = %v", crawlerName, job.Shop, time.Since(start))
+				utils.Log(utils.INFO_LOG, msg, nil, job.Link)
+				d.Ack(false)
+				continue
+
+			case utils.MAISON:
+				err := w.GetProductMaison(job.VendorID, job.CateID, job.Link)
 				if err != nil {
 					attemp, ok := utils.CheckAttempts(d.Headers["x-redelivered-count"])
 					if ok {

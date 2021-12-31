@@ -75,6 +75,7 @@ func (w *Worker) GetProductHP(job *model.MessageReceive, ch *amqp.Channel) error
 
 	dom.Find("div.swatch-option.text").Each(func(i int, s *goquery.Selection) {
 		related_product.Size = s.Text()
+		related_product.SKU = related_product.SKU + related_product.Size
 		product_detail.Variant = append(product_detail.Variant, *related_product)
 	})
 
