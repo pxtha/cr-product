@@ -8,12 +8,11 @@ type AppConfig struct {
 
 	Port string `env:"PORT"`
 
-	RBHost   string `env:"RB_HOST"`
-	RBPort   string `env:"RB_PORT"`
-	RBUser   string `env:"RB_USER"`
-	RBPass   string `env:"RB_PASS"`
-	RBPortUI string `env:"RB_PORT_UI"`
-
+	RBHost        string `env:"RB_HOST"`
+	RBPort        string `env:"RB_PORT"`
+	RBUser        string `env:"RB_USER"`
+	RBPass        string `env:"RB_PASS"`
+	RBPortUI      string `env:"RB_PORT_UI"`
 	QueueName     string `env:"QUEUE_NAME"`
 	NumberWorkers string `env:"NUMBER_WORKER"`
 }
