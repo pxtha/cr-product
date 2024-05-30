@@ -1,6 +1,6 @@
 # CR-Product
 
-CR-Product is a Go project with a focus on product management.
+CR-Product is a Go project with a focus on product crawling using github.com/PuerkitoBio/goquery lib.
 
 ## Overall Architecture
 
